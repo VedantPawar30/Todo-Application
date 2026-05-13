@@ -14,12 +14,12 @@ router.get('/', async (req, res) => {
 
 // POST create a todo
 router.post('/', async (req, res) => {
-  const { title } = req.body;
+  const { title, description } = req.body;
   if (!title || !title.trim()) {
     return res.status(400).json({ message: 'Title is required.' });
   }
   try {
-    const todo = new Todo({ title });
+    const todo = new Todo({ title, description: description || '' });
     const saved = await todo.save();
     res.status(201).json(saved);
   } catch (err) {
@@ -33,8 +33,9 @@ router.put('/:id', async (req, res) => {
     const todo = await Todo.findById(req.params.id);
     if (!todo) return res.status(404).json({ message: 'Todo not found.' });
 
-    if (req.body.title     != null) todo.title     = req.body.title;
-    if (req.body.completed != null) todo.completed = req.body.completed;
+    if (req.body.title       != null) todo.title       = req.body.title;
+    if (req.body.description != null) todo.description = req.body.description;
+    if (req.body.completed   != null) todo.completed   = req.body.completed;
 
     const updated = await todo.save();
     res.json(updated);
